@@ -38,6 +38,9 @@ def on_message(client, userdata, message):
 		global LASTTIME
 		#LASTTIME[station] = datetime.datetime.utcnow().timestamp() # for test
 		LASTTIME[station] = time.time()
+	if data_of_topic[0] == "exit":
+		client.publish("healthy/" + station, "0", retain=True)
+		return
 	if data_of_topic[0] == "maxdelay":
 		MAXDELAY[station] = int(message.payload.decode())
 	if data_of_topic[0] == "lasttime":
@@ -69,6 +72,7 @@ def on_sub():
 	client.subscribe("recparams/#")
 	client.subscribe("realrecparams/#")
 	client.subscribe("maxdelay/#")
+	client.subscribe("exit/#")
 
 def update_healthy(name_station):
 	#razn = datetime.datetime.utcnow().timestamp() - LASTTIME[name_station]
@@ -122,4 +126,3 @@ except (KeyboardInterrupt, SystemExit):
 		client.publish("healthy/" + key, "0", retain=True)
 	client.disconnect()
 	client.loop_stop()
-
