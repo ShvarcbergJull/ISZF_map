@@ -7,7 +7,7 @@ import subprocess
 import datetime
 import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
-sys.path.append("/home/limbo4/parser")
+sys.path.append("/home/limbo4/parser") # change this!
 #from limbo_parser.javad.jps_parser import JPSParser, JPSData
 from limbo_parser.javad.greis import CODE_POS_VEL, CODE_SATIND
 from limbo_parser.javad.greis import CODE_ELEVATION, CODE_AZIMUTH
@@ -17,8 +17,8 @@ from limbo_parser.javad.jps_stat import JPSStatistics
 
 CODES = [CODE_POS_VEL, CODE_SATIND, CODE_ELEVATION, CODE_AZIMUTH,_1r, _2r, _1p, _2p, rc]
 
-OBS = "obs1"
-SITE = "site1"
+OBS = "obs1" # change this!
+SITE = "site1" # change this!
 RECPARAMS = ""
 MAXDELAY = 900 # seconds
 OUTPARAMS = ""
@@ -123,6 +123,7 @@ def start_settings():
 	client.publish("availability/" + OBS + '/' + SITE, "-1", retain=True)
 	client.publish("measure/" + OBS + '/' + SITE, "0", retain=True)
 	client.publish("lasttime/" + OBS + '/' + SITE, "0", retain=True)
+	client.publish("maxdelay/" + OBS + '/' + SITE, MAXDELAY, retain=True)
 	update_measure()
 	update_lasttime()
 
@@ -243,6 +244,7 @@ try:
 	scheduler.start()
 	print('SCHEDULER', scheduler.state())
 except (KeyboardInterrupt, SystemExit):
+	client.publish("exit/" + OBS + '/' + SITE, "1", retain=False)
 	scheduler.shutdown()
 	client.disconnect()
 	client.loop_stop()
